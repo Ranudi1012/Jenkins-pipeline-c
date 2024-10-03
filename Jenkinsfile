@@ -18,7 +18,7 @@ pipeline {
                 always {
                     emailext(
                         attachLog: true,
-                        to: 'snranudi1012@gmail.com',
+                        to: 'sevin.dinsara@gmail.com',
                         subject: "Unit and Integration Tests: ${env.JOB_NAME} [${env.BUILD_NUMBER}]",
                         body: "Unit and Integration Tests have been executed. Please check the results."
                     )
@@ -35,7 +35,7 @@ pipeline {
                 always {
                     emailext(
                         attachLog: true,
-                        to: 'snranudi1012@gmail.com',
+                        to: 'sevin.dinsara@gmail.com',
                         subject: "Code Analysis: ${env.JOB_NAME} [${env.BUILD_NUMBER}]",
                         body: "Code Analysis has been executed. Please check the results."
                     )
@@ -52,7 +52,7 @@ pipeline {
                 always {
                     emailext(
                         attachLog: true,
-                        to: 'snranudi1012@gmail.com',
+                        to: 'sevin.dinsara@gmail.com',
                         subject: "Security Scan: ${env.JOB_NAME} [${env.BUILD_NUMBER}]",
                         body: "Security Scan has been executed. Please check the results."
                     )
@@ -69,7 +69,7 @@ pipeline {
                 always {
                     emailext(
                         attachLog: true,
-                        to: 'snranudi1012@gmail.com',
+                        to: 'sevin.dinsara@gmail.com',
                         subject: "Deploy to Staging: ${env.JOB_NAME} [${env.BUILD_NUMBER}]",
                         body: "Deployment to Staging has been executed. Please check the results."
                     )
@@ -86,7 +86,7 @@ pipeline {
                 always {
                     emailext(
                         attachLog: true,
-                        to: 'snranudi1012@gmail.com',
+                        to: 'sevin.dinsara@gmail.com',
                         subject: "Integration Tests on Staging: ${env.JOB_NAME} [${env.BUILD_NUMBER}]",
                         body: "Integration Tests on Staging have been executed. Please check the results."
                     )
@@ -103,7 +103,7 @@ pipeline {
                 always {
                     emailext(
                         attachLog: true,
-                        to: 'snranudi1012@gmail.com',
+                        to: 'sevin.dinsara@gmail.com',
                         subject: "Deploy to Production: ${env.JOB_NAME} [${env.BUILD_NUMBER}]",
                         body: "Deployment to Production has been executed. Please check the results."
                     )
@@ -120,7 +120,7 @@ pipeline {
         success {
             emailext(
                 attachLog: true,
-                to: 'snranudi1012@gmail.com',
+                to: 'sevin.dinsara@gmail.com',
                 subject: "SUCCESS: ${env.JOB_NAME} [${env.BUILD_NUMBER}]",
                 body: "The pipeline completed successfully."
             )
@@ -130,7 +130,7 @@ pipeline {
             echo 'Build failed!'
             emailext(
                 attachLog: true,
-                to: 'snranudi1012@gmail.com',
+                to: 'sevin.dinsara@gmail.com',
                 subject: "FAILURE: ${env.JOB_NAME} [${env.BUILD_NUMBER}]",
                 body: "The pipeline failed. Please check the logs for details."
             )

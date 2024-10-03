@@ -1,148 +1,139 @@
-pipeline { 
-  agent any 
+pipeline {
+    agent any
 
-  stages { 
-      stage('Build') { 
-          steps { 
-              echo 'Building..'              
-          } 
-          post { 
-              success { 
-                  emailext ( 
-                      attachLog : true, 
-                      to: 'snranudi1012@gmail.com', 
-                       subject: "Build Stage Succeeded", 
-                       body: "The Build stage has completed successfully." 
-                      ) 
-              } 
-              failure { 
-                  mail to: 'snranudi1012@gmail.com', 
-                       subject: "Build Stage Failed", 
-                       body: "The Build stage has failed." 
-              } 
-          } 
-      } 
-      stage('Unit and Integration Tests') { 
-          steps { 
-              echo 'Running Unit and Integration Tests...'            
-          } 
-          post { 
-              success { 
-                  emailext ( 
-                      attachLog :true, 
-                      to: 'snranudi1012@gmail.com', 
-                       subject: "Testing Stage Succeeded", 
-                       body: "Unit and Integration Tests stage completed successfully." 
-                      ) 
-              } 
-              failure { 
-                  mail to: 'snranudi1012@gmail.com', 
-                       subject: "Testing Stage Failed", 
-                       body: "Unit and Integration Tests stage has failed." 
-              } 
-          } 
-      } 
-      stage('Code Analysis') { 
-          steps { 
-              echo 'Performing Code Analysis...'               
-          } 
-          post { 
-              success { 
-                  emailext ( 
-                      attachLog :true, 
-                       to: 'snranudi1012@gmail.com', 
-                       subject: "Code Analysis Stage Succeeded", 
-                       body: "The Code Analysis stage has completed successfully.") 
-              } 
-              failure { 
-                  mail to: 'snranudi1012@gmail.com', 
-                       subject: "Code Analysis Stage Failed", 
-                       body: "The Code Analysis stage has failed." 
-              } 
-          } 
-      } 
-      stage('Security Scan') { 
-          steps { 
-              echo 'Performing Security Scan...' 
-          } 
-          post { 
-              success { 
-                 emailext ( 
-                      attachLog :true, 
-                       to: 'snranudi1012@gmail.com', 
-                       subject: "Security Scan Stage Succeeded", 
-                       body: "The Security Scan stage has completed successfully.") 
-              } 
-              failure { 
-                  mail to: 'snranudi1012@gmail.com', 
-                       subject: "Security Scan Stage Failed", 
-                       body: "The Security Scan stage has failed." 
-              } 
-          } 
-      } 
-      stage('Deploy to Staging') { 
-          steps { 
-              echo 'Deploying to Staging...' 
-          } 
-          post { 
-              success { 
-                 emailext ( 
-                      attachLog :true,  
-                       to: 'snranudi1012@gmail.com', 
-                       subject: "Deploy to Staging Succeeded", 
-                       body: "Deployment to Staging has completed successfully.") 
-              } 
-              failure { 
-                  mail to: 'snranudi1012@gmail.com', 
-                       subject: "Deploy to Staging Failed", 
-                       body: "Deployment to Staging has failed." 
-              } 
-          } 
-      } 
-      stage('Integration Tests on Staging') { 
-          steps { 
-              echo 'Running Integration Tests on Staging...' 
-           
-          } 
-          post { 
-              success { 
-                  emailext ( 
-                      attachLog :true, 
-                       to: 'snranudi1012@gmail.com', 
-                       subject: "Staging Tests Succeeded", 
-                       body: "Integration Tests on Staging have completed successfully.") 
-              } 
-              failure { 
-                  mail to: 'snranudi1012@gmail.com', 
-                       subject: "Staging Tests Failed", 
-                       body: "Integration Tests on Staging have failed." 
-              } 
-          } 
-      } 
-      stage('Deploy to Production') { 
-          steps { 
-              echo 'Deploying to Production...' 
-          } 
-          post { 
-              success { 
-                 emailext ( 
-                      attachLog :true,  
-                      to: 'snranudi1012@gmail.com', 
-                       subject: "Production Deployment Succeeded", 
-                       body: "Deployment to Production has completed successfully.") 
-              } 
-              failure { 
-                  mail to: 'snranudi1012@gmail.com', 
-                       subject: "Production Deployment Failed", 
-                       body: "Deployment to Production has failed." 
-              } 
-          } 
-      } 
-  } 
+    stages {
+        stage('Build') {
+            steps {
+                echo 'Building the project.'
+                echo 'mvn clean package'
+            }
+        }
 
-  post { 
-always { 
-echo 'Pipeline finished.' 
-} 
-} 
+        stage('Unit and Integration Tests') {
+            steps {
+                echo 'Running Unit and Integration Tests.'
+                echo 'mvn test'
+            }
+            post {
+                always {
+                    emailext(
+                        attachLog: true,
+                        to: 'snranudi1012@gmail.com',
+                        subject: "Unit and Integration Tests: ${env.JOB_NAME} [${env.BUILD_NUMBER}]",
+                        body: "Unit and Integration Tests have been executed. Please check the results."
+                    )
+                }
+            }
+        }
+
+        stage('Code Analysis') {
+            steps {
+                echo 'Performing Code Analysis...'
+                echo 'sonar-scanner -Dsonar.projectKey=my_project -Dsonar.sources=src'
+            }
+            post {
+                always {
+                    emailext(
+                        attachLog: true,
+                        to: 'snranudi1012@gmail.com',
+                        subject: "Code Analysis: ${env.JOB_NAME} [${env.BUILD_NUMBER}]",
+                        body: "Code Analysis has been executed. Please check the results."
+                    )
+                }
+            }
+        }
+
+        stage('Security Scan') {
+            steps {
+                echo 'Performing Security Scan...'
+                echo 'dependency-check.bat --project my_project --out . --scan ./src'
+            }
+            post {
+                always {
+                    emailext(
+                        attachLog: true,
+                        to: 'snranudi1012@gmail.com',
+                        subject: "Security Scan: ${env.JOB_NAME} [${env.BUILD_NUMBER}]",
+                        body: "Security Scan has been executed. Please check the results."
+                    )
+                }
+            }
+        }
+
+        stage('Deploy to Staging') {
+            steps {
+                echo 'Deploying to Staging...'
+                echo 'Copy-Item target'
+            }
+            post {
+                always {
+                    emailext(
+                        attachLog: true,
+                        to: 'snranudi1012@gmail.com',
+                        subject: "Deploy to Staging: ${env.JOB_NAME} [${env.BUILD_NUMBER}]",
+                        body: "Deployment to Staging has been executed. Please check the results."
+                    )
+                }
+            }
+        }
+
+        stage('Integration Tests on Staging') {
+            steps {
+                echo 'Running Integration Tests on Staging...'
+                echo 'Invoke-WebRequest -Uri http://staging-server/api/tests -UseBasicParsing'
+            }
+            post {
+                always {
+                    emailext(
+                        attachLog: true,
+                        to: 'snranudi1012@gmail.com',
+                        subject: "Integration Tests on Staging: ${env.JOB_NAME} [${env.BUILD_NUMBER}]",
+                        body: "Integration Tests on Staging have been executed. Please check the results."
+                    )
+                }
+            }
+        }
+
+        stage('Deploy to Production') {
+            steps {
+                echo 'Deploying to Production...'
+                echo 'Copy-Item target'
+            }
+            post {
+                always {
+                    emailext(
+                        attachLog: true,
+                        to: 'snranudi1012@gmail.com',
+                        subject: "Deploy to Production: ${env.JOB_NAME} [${env.BUILD_NUMBER}]",
+                        body: "Deployment to Production has been executed. Please check the results."
+                    )
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            echo 'Cleaning up...'
+        }
+
+        success {
+            emailext(
+                attachLog: true,
+                to: 'snranudi1012@gmail.com',
+                subject: "SUCCESS: ${env.JOB_NAME} [${env.BUILD_NUMBER}]",
+                body: "The pipeline completed successfully."
+            )
+        }
+
+        failure {
+            echo 'Build failed!'
+            emailext(
+                attachLog: true,
+                to: 'snranudi1012@gmail.com',
+                subject: "FAILURE: ${env.JOB_NAME} [${env.BUILD_NUMBER}]",
+                body: "The pipeline failed. Please check the logs for details."
+            )
+        }
+    }
 }
